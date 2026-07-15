@@ -1,0 +1,7 @@
+.venv/
+lseg-data.config.json
+*.log
+__pycache__/
+.codex_work/
+site/
+site-site-version.tar.gz

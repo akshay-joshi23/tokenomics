@@ -1,0 +1,1792 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src 'unsafe-inline' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>LLM Inference Cost Explorer</title>
+<style>:root{color-scheme:light dark;background:light-dark(rgb(255 255 255), rgb(24 24 24))}html,body{margin:0}body{box-sizing:border-box;padding:clamp(.5rem,1.5vw,1rem);background:inherit}iframe{display:block;width:100%;max-width:1600px;height:calc(100vh - 2rem);margin:0 auto;border:0}</style>
+</head>
+<body>
+<iframe sandbox="allow-scripts" referrerpolicy="no-referrer" title="Llm Inference Cost Explorer" srcdoc="&lt;!doctype html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;utf-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+&lt;meta name=&quot;referrer&quot; content=&quot;no-referrer&quot;&gt;
+&lt;meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;default-src &#x27;none&#x27;; script-src &#x27;unsafe-inline&#x27; &#x27;unsafe-eval&#x27; &#x27;wasm-unsafe-eval&#x27; blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src &#x27;unsafe-inline&#x27; blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;none&#x27;&quot;&gt;
+&lt;title&gt;Llm Inference Cost Explorer&lt;/title&gt;
+&lt;style&gt;:root {
+  color-scheme: light dark;
+  background-color: var(--background) !important;
+
+  /* Agent-facing contract; keep in sync with SKILL.md. */
+  --background: light-dark(rgb(255 255 255), rgb(24 24 24));
+  --foreground: light-dark(rgb(26 28 31), rgb(255 255 255));
+  --card: color-mix(in oklab, var(--foreground) 5%, transparent);
+  --card-foreground: var(--foreground);
+  --popover: light-dark(rgb(255 255 255), rgb(45 45 45));
+  --popover-foreground: var(--foreground);
+  --primary: light-dark(rgb(51 156 255), rgb(131 195 255));
+  --primary-foreground: light-dark(rgb(255 255 255), rgb(13 13 13));
+  --secondary: light-dark(rgb(255 255 255 / 96%), rgb(54 54 54 / 96%));
+  --secondary-foreground: var(--foreground);
+  --muted: color-mix(in srgb, var(--foreground) 10%, transparent);
+  --muted-foreground: light-dark(
+    rgb(26 28 31 / 49.4%),
+    rgb(255 255 255 / 49.8%)
+  );
+  --accent: light-dark(rgb(229 242 255), rgb(13 39 63));
+  --accent-foreground: var(--primary);
+  --destructive: light-dark(rgb(226 85 7), rgb(255 133 73));
+  --border: light-dark(rgb(26 28 31 / 8%), rgb(255 255 255 / 8.2%));
+  --input: light-dark(
+    rgb(26 28 31 / 11.8%),
+    color-mix(in oklab, rgb(0 0 0) 10%, transparent)
+  );
+  --ring: light-dark(rgb(51 156 255), rgb(131 195 255 / 76%));
+  --font-size-base: 14px;
+  --viz-series-1: var(--primary);
+  --viz-series-2: light-dark(rgb(243 136 59), rgb(245 154 86));
+  --viz-series-3: light-dark(rgb(93 201 119), rgb(116 213 139));
+  --viz-series-4: light-dark(rgb(235 119 177), rgb(240 143 192));
+  --viz-series-5: light-dark(rgb(155 121 236), rgb(170 145 239));
+  --viz-series-6: light-dark(rgb(58 185 177), rgb(90 203 194));
+
+  /* Internal implementation variables; not part of the agent contract. */
+  --font-sans: -apple-system, system-ui, &quot;Segoe UI&quot;, sans-serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, &quot;SF Mono&quot;, Menlo, Consolas, &quot;Liberation Mono&quot;,
+    monospace;
+  --font-size-normal: max(11px, var(--font-size-base));
+  --font-size-tooltip: calc(var(--font-size-base) - 1px);
+  --font-size-small: max(11px, calc(var(--font-size-base) - 2px));
+  --font-size-h1: calc(var(--font-size-normal) * 1.7142857143);
+  --font-size-h2: calc(var(--font-size-normal) * 1.4285714286);
+  --font-size-h3: calc(var(--font-size-normal) * 1.2857142857);
+  --font-weight-normal: 430;
+  --font-weight-medium: 500;
+  --line-height-normal: calc(var(--font-size-normal) * 1.5);
+  --line-height-tooltip: calc(var(--font-size-tooltip) * 1.4285714286);
+  --line-height-small: calc(var(--font-size-small) + 4px);
+  --radius: 12.5px;
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-2xl: calc(var(--radius) * 1.6);
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 2px -1px rgb(0 0 0 / 8%);
+  --checkmark-image: url(&quot;data:image/svg+xml,%3Csvg xmlns=&#x27;http://www.w3.org/2000/svg&#x27; viewBox=&#x27;0 0 17 17&#x27;%3E%3Cpath d=&#x27;M12.8961 3.64101C13.1297 3.41418 13.4984 3.37523 13.7779 3.56581C14.0571 3.75635 14.1554 4.11331 14.0299 4.41347L13.9615 4.53847L7.71151 13.7045C7.59411 13.8767 7.4063 13.9877 7.19881 14.0072C6.99136 14.0267 6.78564 13.9533 6.63826 13.806L2.88826 10.056L2.79842 9.9457C2.6192 9.67407 2.64927 9.30496 2.88826 9.06581C3.12738 8.82669 3.49647 8.79676 3.76815 8.97597L3.8785 9.06581L7.03084 12.2182L12.8053 3.74941L12.8961 3.64101Z&#x27;/%3E%3C/svg%3E&quot;);
+
+  /* Legacy aliases; not part of the current agent contract. */
+  --viz-bg: transparent;
+  --viz-panel: var(--card);
+  --viz-border: var(--border);
+  --viz-text: var(--foreground);
+  --viz-muted: var(--muted-foreground);
+  --viz-accent: var(--primary);
+  --viz-accent-text: var(--primary-foreground);
+  --viz-accent-bg: var(--accent);
+  --viz-font-size: var(--font-size-base);
+  --viz-warning: var(--destructive);
+  --color-background-primary: var(--background);
+  --color-text-primary: var(--foreground);
+  --color-border-secondary: var(--border);
+}
+
+:root[data-theme=&quot;light&quot;] {
+  color-scheme: light;
+}
+
+:root[data-theme=&quot;dark&quot;] {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html &gt; body {
+  margin: 0;
+  padding: 5px;
+  color: var(--foreground);
+  background: transparent !important;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-normal);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+}
+
+a {
+  color: color-mix(in srgb, var(--viz-accent) 80%, var(--viz-text) 20%);
+  cursor: pointer;
+  font-weight: var(--viz-font-weight-medium);
+  text-decoration: none;
+  text-underline-offset: 2px;
+}
+
+a:is(:hover, :focus-visible) {
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-decoration-thickness: 0.5px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin-block: 0;
+}
+
+h1 {
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h2 {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h3,
+h4,
+h5,
+h6 {
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.3;
+}
+
+b,
+strong,
+th {
+  font-weight: var(--font-weight-medium);
+}
+
+code:not(pre code) {
+  display: inline;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  corner-shape: superellipse(1.5);
+  background: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  overflow-wrap: anywhere;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  word-break: break-word;
+}
+
+#widget {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  padding: 0;
+  background: transparent !important;
+}
+
+.card {
+  min-width: 0;
+  padding: 12px;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  border-radius: var(--radius-2xl);
+  corner-shape: superellipse(1.5);
+  color: var(--card-foreground);
+  background: var(--card);
+}
+
+#widget &gt; :not(.card) {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.tooltip {
+  position: fixed;
+  z-index: 50;
+  top: 0;
+  left: 0;
+  width: max-content;
+  max-width: min(
+    20rem,
+    var(--tooltip-available-width, calc(100vw - 10px)),
+    calc(100vw - 10px)
+  );
+  max-height: min(
+    var(--tooltip-available-height, calc(100vh - 10px)),
+    calc(100vh - 10px)
+  );
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--popover-foreground);
+  background: var(--popover);
+  box-shadow: none;
+  font-size: var(--font-size-tooltip);
+  line-height: var(--line-height-tooltip);
+  overflow-wrap: break-word;
+  white-space: normal;
+  pointer-events: none;
+  user-select: none;
+}
+
+.viz-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(max(180px, 24%), 1fr));
+  gap: 10px;
+}
+
+.viz-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.viz-stat-value {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+.viz-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.viz-badge {
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  color: var(--accent-foreground);
+  background: var(--accent);
+  font-weight: var(--font-weight-medium);
+}
+
+small,
+.text-small,
+.viz-badge {
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-small);
+}
+
+.text-muted {
+  color: var(--muted-foreground);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.viz-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.viz-controls &gt; .form-label {
+  display: grid;
+  min-width: min(100%, 260px);
+  flex: 1 1 280px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 2px 12px;
+  margin-bottom: 0;
+}
+
+.viz-controls &gt; .form-label &gt; :is(.form-control, .form-range, .form-select) {
+  grid-column: 1 / -1;
+}
+
+.btn,
+.form-check-input,
+.form-control,
+.form-range,
+.form-select {
+  font: inherit;
+}
+
+.btn {
+  appearance: button;
+  display: inline-flex;
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  min-height: 28px;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0 8px;
+  -webkit-app-region: no-drag;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: var(--cursor-interaction, pointer);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.btn:is(.btn-block, .viz-tile) {
+  inline-size: 100%;
+}
+
+.btn.viz-tile {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+a.btn {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn:not(:disabled):hover {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.btn-primary {
+  border-color: transparent;
+  color: var(--primary-foreground);
+  background: var(--foreground);
+  background-clip: padding-box;
+}
+
+.btn-primary .text-muted {
+  color: color-mix(in srgb, var(--primary-foreground) 50%, transparent);
+}
+
+.btn-primary:not(:disabled):hover {
+  background: color-mix(in srgb, var(--foreground) 80%, transparent);
+  background-clip: padding-box;
+}
+
+.btn-ghost {
+  border-color: transparent;
+  color: var(--muted-foreground);
+  background: transparent;
+}
+
+.btn-ghost:not(:disabled):hover {
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+[data-lucide] {
+  stroke-width: 1.6;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--foreground);
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  padding: 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--foreground);
+  background: var(--secondary);
+}
+
+.form-control::placeholder {
+  color: var(--muted-foreground);
+}
+
+.form-control[type=&quot;file&quot;] {
+  padding: 0;
+  overflow: hidden;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control[type=&quot;file&quot;]::file-selector-button {
+  min-height: 26px;
+  margin-right: 8px;
+  padding: 0 8px;
+  border: 0;
+  border-right: 1px solid var(--input);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: inherit;
+  font: inherit;
+}
+
+.form-control[type=&quot;file&quot;]:not(:disabled):hover::file-selector-button {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-control-color[type=&quot;color&quot;] {
+  width: 40px;
+  height: 28px;
+  padding: 3px;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control-color[type=&quot;color&quot;]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.form-control-color[type=&quot;color&quot;]::-webkit-color-swatch {
+  border: 0;
+  border-radius: calc(var(--radius-lg) - 4px);
+  corner-shape: superellipse(1.5);
+}
+
+textarea.form-control {
+  height: auto;
+  min-height: 72px;
+  padding: 8px 10px;
+  resize: vertical;
+}
+
+.form-control:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-control:disabled,
+.form-select:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.form-select {
+  appearance: none;
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  margin: 0;
+  padding: 0 32px 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--foreground);
+  background-color: var(--secondary);
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted-foreground) 50%),
+    linear-gradient(135deg, var(--muted-foreground) 50%, transparent 50%);
+  background-position:
+    calc(100% - 14px) 50%,
+    calc(100% - 10px) 50%;
+  background-repeat: no-repeat;
+  background-size: 4px 4px;
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-select:not(:disabled):hover {
+  background-color: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-select:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-check {
+  display: flex;
+  min-height: 20px;
+  align-items: center;
+  gap: 6px;
+}
+
+.form-check-input {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  margin: 0;
+  border: 1px solid var(--input);
+  color: var(--primary-foreground);
+  background-color: transparent;
+  cursor: var(--cursor-interaction, default);
+  transition:
+    background-color 150ms,
+    border-color 150ms,
+    box-shadow 150ms;
+}
+
+.form-check:not(.form-switch) .form-check-input[type=&quot;checkbox&quot;] {
+  border-color: var(--input);
+  border-radius: var(--radius-sm);
+  corner-shape: superellipse(1.5);
+  background-color: var(--secondary);
+  box-shadow: var(--shadow-sm);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input:not(:disabled):not(:checked):hover {
+  background-color: var(--card);
+}
+
+.form-check:not(.form-switch) .form-check-input[type=&quot;checkbox&quot;]:checked {
+  border-color: var(--primary);
+  background-color: var(--primary);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input[type=&quot;checkbox&quot;]:checked::before {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--primary-foreground);
+  content: &quot;&quot;;
+  mask: var(--checkmark-image) center / 12px 12px no-repeat;
+}
+
+.form-check-input[type=&quot;radio&quot;] {
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-full);
+}
+
+.form-check-input[type=&quot;radio&quot;]:checked {
+  border: 2px solid var(--primary);
+  background:
+    radial-gradient(circle, var(--primary-foreground) 0 2.5px, transparent 3px),
+    var(--primary);
+}
+
+.form-check:not(.form-switch) .form-check-input:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+}
+
+.form-switch .form-check-input:disabled,
+.form-switch .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.form-check-label {
+  color: var(--foreground);
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-switch .form-check-input {
+  position: relative;
+  width: 32px;
+  height: 20px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--muted);
+  box-shadow: none;
+  transition: background-color 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  box-sizing: border-box;
+  border: 1px solid light-dark(var(--primary-foreground), var(--foreground));
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+  box-shadow: var(--shadow-sm);
+  content: &quot;&quot;;
+  transform: translate(2px, -50%);
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input:checked {
+  background: var(--primary);
+}
+
+.form-switch .form-check-input:checked::before {
+  transform: translate(14px, -50%);
+}
+
+.form-switch .form-check-input:focus-visible {
+  box-shadow: 0 0 0 2px var(--ring);
+}
+
+.form-range {
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: 28px;
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  outline: none;
+  border: 0;
+  accent-color: var(--primary);
+  background: linear-gradient(
+      color-mix(in srgb, var(--foreground) 7%, transparent),
+      color-mix(in srgb, var(--foreground) 7%, transparent)
+    )
+    center / 100% 2px no-repeat;
+}
+
+.form-range::-webkit-slider-runnable-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-webkit-slider-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range::-moz-range-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-moz-range-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.btn:not(.btn-primary, .viz-tile):is(
+    [aria-pressed=&quot;true&quot;],
+    [aria-selected=&quot;true&quot;],
+    .is-selected
+  ) {
+  border-color: var(--primary);
+  color: var(--primary-foreground);
+  background: var(--primary);
+}
+
+.btn.viz-tile:is([aria-pressed=&quot;true&quot;], [aria-selected=&quot;true&quot;], .is-selected) {
+  border-color: var(--primary);
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+#widget &gt; svg {
+  width: 100%;
+}
+
+.text-warning,
+.text-destructive {
+  color: var(--destructive);
+}
+
+html&gt;body{padding:0}&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id=&quot;llm-cost-explorer&quot;&gt;
+  &lt;style&gt;
+    #llm-cost-explorer {
+      color: var(--foreground);
+      width: 100%;
+    }
+    #llm-cost-explorer .cost-controls {
+      align-items: end;
+      margin-bottom: 0.75rem;
+    }
+    #llm-cost-explorer .token-control {
+      flex: 1 1 20rem;
+    }
+    #llm-cost-explorer .range-control {
+      flex: 0 1 14rem;
+    }
+    #llm-cost-explorer .token-readout {
+      font-weight: 500;
+      color: var(--foreground);
+    }
+    #llm-cost-explorer .group-controls {
+      gap: 0.75rem;
+    }
+    #llm-cost-explorer .takeaway-line {
+      margin-bottom: 0.4rem;
+      font-weight: 500;
+    }
+    #llm-cost-explorer .chart-wrap {
+      position: relative;
+      width: 100%;
+      min-height: 22rem;
+    }
+    #llm-cost-explorer .llm-chart {
+      display: block;
+      width: 100%;
+      overflow: visible;
+      touch-action: none;
+    }
+    #llm-cost-explorer .axis path,
+    #llm-cost-explorer .axis line {
+      stroke: var(--border);
+    }
+    #llm-cost-explorer .axis text,
+    #llm-cost-explorer .axis-title,
+    #llm-cost-explorer .chart-note {
+      fill: var(--muted-foreground);
+      font-family: inherit;
+    }
+    #llm-cost-explorer .grid line {
+      stroke: var(--border);
+      stroke-opacity: 0.65;
+    }
+    #llm-cost-explorer .grid path {
+      display: none;
+    }
+    #llm-cost-explorer .series-path {
+      fill: none;
+      vector-effect: non-scaling-stroke;
+    }
+    #llm-cost-explorer .crosshair {
+      stroke: var(--muted-foreground);
+      stroke-width: 1;
+      stroke-dasharray: 3 4;
+      pointer-events: none;
+    }
+    #llm-cost-explorer .selection-mark {
+      stroke: var(--background);
+      stroke-width: 2;
+      vector-effect: non-scaling-stroke;
+      pointer-events: none;
+    }
+    #llm-cost-explorer .crossover-label {
+      fill: var(--foreground);
+      font-family: inherit;
+      font-weight: 500;
+      pointer-events: none;
+    }
+    #llm-cost-explorer .crossover-dot {
+      stroke: var(--background);
+      stroke-width: 2;
+      vector-effect: non-scaling-stroke;
+      pointer-events: none;
+    }
+    #llm-cost-explorer .endpoint-label {
+      fill: var(--foreground);
+      stroke: var(--background);
+      stroke-width: 4;
+      paint-order: stroke;
+      font-family: inherit;
+      font-weight: 500;
+      pointer-events: none;
+    }
+    #llm-cost-explorer .hover-target {
+      fill: transparent;
+      cursor: crosshair;
+    }
+    #llm-cost-explorer .cost-tooltip {
+      position: absolute;
+      pointer-events: none;
+      opacity: 0;
+      transform: translate(-50%, -100%);
+      white-space: nowrap;
+    }
+    #llm-cost-explorer .series-legend {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.45rem 1.25rem;
+      margin-top: 0.5rem;
+    }
+    #llm-cost-explorer .legend-row {
+      display: grid;
+      grid-template-columns: 2.5rem minmax(0, 1fr);
+      align-items: start;
+      column-gap: 0.55rem;
+      min-width: 0;
+    }
+    #llm-cost-explorer .legend-line {
+      display: block;
+      width: 2.25rem;
+      height: 0;
+      border-top: var(--line-width, 2px) var(--line-style, solid) var(--line-color);
+      position: relative;
+      margin-top: 0.65rem;
+    }
+    #llm-cost-explorer .legend-line::after {
+      content: &quot;&quot;;
+      position: absolute;
+      width: 0.45rem;
+      height: 0.45rem;
+      border-radius: 50%;
+      background: var(--line-color);
+      top: -0.28rem;
+      left: 0.9rem;
+    }
+    #llm-cost-explorer .legend-copy {
+      min-width: 0;
+    }
+    #llm-cost-explorer .legend-name {
+      display: block;
+      font-weight: 500;
+      overflow-wrap: anywhere;
+    }
+    #llm-cost-explorer .legend-detail {
+      display: block;
+      color: var(--muted-foreground);
+      overflow-wrap: anywhere;
+    }
+    #llm-cost-explorer .legend-value {
+      grid-column: 2;
+      font-variant-numeric: tabular-nums;
+      font-weight: 500;
+      white-space: nowrap;
+      text-align: left;
+    }
+    #llm-cost-explorer .legend-row.is-hidden {
+      display: none;
+    }
+    #llm-cost-explorer .interaction-note {
+      margin-top: 0.65rem;
+    }
+    @media (max-width: 620px) {
+      #llm-cost-explorer .series-legend {
+        grid-template-columns: 1fr;
+      }
+      #llm-cost-explorer .legend-row {
+        grid-template-columns: 2rem minmax(0, 1fr);
+      }
+      #llm-cost-explorer .legend-line {
+        width: 1.75rem;
+      }
+    }
+  &lt;/style&gt;
+
+  &lt;div class=&quot;viz-controls cost-controls&quot;&gt;
+    &lt;label class=&quot;form-label token-control&quot; for=&quot;llm-token-slider&quot;&gt;
+      Selected monthly usage:
+      &lt;span class=&quot;token-readout&quot; id=&quot;llm-token-readout&quot;&gt;5 billion tokens/month&lt;/span&gt;
+      &lt;input class=&quot;form-range&quot; id=&quot;llm-token-slider&quot; type=&quot;range&quot; min=&quot;0&quot; max=&quot;1000&quot; step=&quot;1&quot; value=&quot;948&quot; aria-describedby=&quot;llm-takeaway llm-token-help&quot;&gt;
+    &lt;/label&gt;
+    &lt;label class=&quot;form-label range-control&quot; for=&quot;llm-view-range&quot;&gt;
+      X-axis view:
+      &lt;select class=&quot;form-select&quot; id=&quot;llm-view-range&quot;&gt;
+        &lt;option value=&quot;focus&quot; selected&gt;0–8B decision range&lt;/option&gt;
+        &lt;option value=&quot;full&quot;&gt;1M–300B full range&lt;/option&gt;
+      &lt;/select&gt;
+    &lt;/label&gt;
+    &lt;div class=&quot;viz-row group-controls&quot;&gt;
+      &lt;label class=&quot;form-check&quot;&gt;
+        &lt;input class=&quot;form-check-input llm-group-toggle&quot; type=&quot;checkbox&quot; id=&quot;llm-frontier-extra&quot; value=&quot;frontier-extra&quot;&gt;
+        &lt;span class=&quot;form-check-label&quot;&gt;Add Claude, Gemini &amp;amp; Grok&lt;/span&gt;
+      &lt;/label&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div class=&quot;takeaway-line&quot; id=&quot;llm-takeaway&quot; aria-live=&quot;polite&quot;&gt;&lt;/div&gt;
+
+  &lt;div class=&quot;chart-wrap&quot; id=&quot;llm-chart-wrap&quot;&gt;
+    &lt;svg class=&quot;llm-chart&quot; id=&quot;llm-cost-chart&quot; role=&quot;img&quot; aria-labelledby=&quot;llm-chart-title llm-chart-desc&quot;&gt;
+      &lt;title id=&quot;llm-chart-title&quot;&gt;Monthly LLM inference cost by total monthly token usage&lt;/title&gt;
+      &lt;desc id=&quot;llm-chart-desc&quot;&gt;The default linear view shows zero to eight billion monthly tokens, crossover points, published GPT-5.6 and DeepSeek API prices, and estimated Akash and owned H200 infrastructure running Llama 3.3 70B FP8.&lt;/desc&gt;
+    &lt;/svg&gt;
+    &lt;div class=&quot;tooltip cost-tooltip text-small&quot; id=&quot;llm-cost-tooltip&quot;&gt;&lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div class=&quot;series-legend&quot; id=&quot;llm-series-legend&quot; aria-live=&quot;polite&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;interaction-note text-small text-muted&quot; id=&quot;llm-token-help&quot;&gt;
+    Costs use a fixed 30K-input / 5K-output request mix. Infrastructure assumes one warm node minimum and an estimated 12.23B-token monthly capacity. Choose the full range for 300B; scroll to zoom, drag to pan, hover, or move the slider.
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script src=&quot;https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+(function () {
+  const root = document.getElementById(&quot;llm-cost-explorer&quot;);
+  const svg = d3.select(&quot;#llm-cost-chart&quot;);
+  const wrap = document.getElementById(&quot;llm-chart-wrap&quot;);
+  const slider = document.getElementById(&quot;llm-token-slider&quot;);
+  const readout = document.getElementById(&quot;llm-token-readout&quot;);
+  const takeaway = document.getElementById(&quot;llm-takeaway&quot;);
+  const legend = document.getElementById(&quot;llm-series-legend&quot;);
+  const tooltip = document.getElementById(&quot;llm-cost-tooltip&quot;);
+  const rangeSelect = document.getElementById(&quot;llm-view-range&quot;);
+  const groupToggles = Array.from(root.querySelectorAll(&quot;.llm-group-toggle&quot;));
+
+  const minTokensM = 1;
+  const focusMaxTokensM = 8000;
+  const focusMaxCost = 75000;
+  const maxTokensM = 300000;
+  const capacityM = 12233.615419469419;
+  const akashNodeMonthly = 26221.6;
+  const ownedNodeMonthly = 9136.8138832;
+
+  const cssVar = function (name) {
+    return getComputedStyle(root).getPropertyValue(name).trim();
+  };
+
+  const series = [
+    {
+      id: &quot;gpt&quot;,
+      group: &quot;frontier&quot;,
+      name: &quot;Frontier API representative · GPT-5.6 Sol&quot;,
+      detail: &quot;Published · $5.00/M input + $30.00/M output&quot;,
+      colorVar: &quot;--viz-series-1&quot;,
+      dash: null,
+      marker: d3.symbolCircle,
+      width: 2,
+      cost: function (x) { return 8.571428571428571 * x; }
+    },
+    {
+      id: &quot;claude&quot;,
+      group: &quot;frontier-extra&quot;,
+      name: &quot;Frontier API · Claude Sonnet 5&quot;,
+      detail: &quot;Published introductory rate through Aug 31, 2026 · $2.00/M input + $10.00/M output&quot;,
+      colorVar: &quot;--viz-series-1&quot;,
+      dash: &quot;9 5&quot;,
+      marker: d3.symbolSquare,
+      width: 2,
+      cost: function (x) { return 3.142857142857143 * x; }
+    },
+    {
+      id: &quot;gemini&quot;,
+      group: &quot;frontier-extra&quot;,
+      name: &quot;Frontier API · Gemini 3.1 Pro Preview&quot;,
+      detail: &quot;Published ≤200K prompt · $2.00/M input + $12.00/M output&quot;,
+      colorVar: &quot;--viz-series-1&quot;,
+      dash: &quot;2 4&quot;,
+      marker: d3.symbolDiamond,
+      width: 2,
+      cost: function (x) { return 3.4285714285714284 * x; }
+    },
+    {
+      id: &quot;grok&quot;,
+      group: &quot;frontier-extra&quot;,
+      name: &quot;Frontier API · Grok 4.5&quot;,
+      detail: &quot;Published short-context rate · $2.00/M input + $6.00/M output&quot;,
+      colorVar: &quot;--viz-series-1&quot;,
+      dash: &quot;12 4 2 4&quot;,
+      marker: d3.symbolTriangle,
+      width: 2,
+      cost: function (x) { return 2.571428571428571 * x; }
+    },
+    {
+      id: &quot;deepseek&quot;,
+      group: &quot;open&quot;,
+      name: &quot;Managed open-model API · DeepSeek V4 Pro direct&quot;,
+      detail: &quot;Published direct API; not self-hosted or model-equivalent · $0.435/M input + $0.87/M output&quot;,
+      colorVar: &quot;--viz-series-2&quot;,
+      dash: null,
+      marker: d3.symbolCircle,
+      width: 3,
+      cost: function (x) { return 0.4971428571428571 * x; }
+    },
+    {
+      id: &quot;akash&quot;,
+      group: &quot;depin&quot;,
+      name: &quot;DePIN rental · Akash 8×H200 · Llama 3.3 70B FP8&quot;,
+      detail: &quot;Warm-node minimum · open-weight 70B proxy, not frontier-equivalent · live quote + estimated throughput&quot;,
+      colorVar: &quot;--viz-series-4&quot;,
+      dash: &quot;10 5&quot;,
+      marker: d3.symbolTriangle,
+      width: 4,
+      nodeCost: akashNodeMonthly,
+      capacity: capacityM,
+      cost: function (x) { return nodeCount(x) * akashNodeMonthly; }
+    },
+    {
+      id: &quot;owned&quot;,
+      group: &quot;owned&quot;,
+      name: &quot;Owned 8×H200 · Llama 3.3 70B FP8&quot;,
+      detail: &quot;Warm-node minimum · open-weight 70B proxy, not frontier-equivalent · estimated 36-month amortization + power&quot;,
+      colorVar: &quot;--foreground&quot;,
+      dash: null,
+      marker: d3.symbolSquare,
+      width: 4,
+      nodeCost: ownedNodeMonthly,
+      capacity: capacityM,
+      cost: function (x) { return nodeCount(x) * ownedNodeMonthly; }
+    }
+  ];
+
+  let width = 0;
+  let height = 0;
+  let margins = {top: 18, right: 20, bottom: 64, left: 76};
+  let innerWidth = 0;
+  let innerHeight = 0;
+  let xBase;
+  let xView;
+  let yScale;
+  let plot;
+  let overlay;
+  let currentTransform = d3.zoomIdentity;
+  let selectedTokensM = 5000;
+  let viewMode = &quot;focus&quot;;
+  let suppressZoom = false;
+
+  function nodeCount(x) {
+    return Math.max(1, Math.ceil((x / capacityM) - 1e-12));
+  }
+
+  function visibleGroups() {
+    const active = new Set([&quot;frontier&quot;, &quot;open&quot;, &quot;depin&quot;, &quot;owned&quot;]);
+    groupToggles.forEach(function (control) {
+      if (control.checked) active.add(control.value);
+    });
+    return active;
+  }
+
+  function visibleSeries() {
+    const active = visibleGroups();
+    return series.filter(function (item) { return active.has(item.group); });
+  }
+
+  function formatCompactCurrency(value) {
+    if (value &gt;= 1000000) return &quot;$&quot; + d3.format(&quot;.3~s&quot;)(value).replace(&quot;G&quot;, &quot;B&quot;);
+    if (value &gt;= 1000) return &quot;$&quot; + d3.format(&quot;.3~s&quot;)(value);
+    if (value &gt;= 100) return &quot;$&quot; + d3.format(&quot;,.0f&quot;)(value);
+    if (value &gt;= 10) return &quot;$&quot; + d3.format(&quot;,.1f&quot;)(value);
+    return &quot;$&quot; + d3.format(&quot;,.2f&quot;)(value);
+  }
+
+  function formatExactCurrency(value) {
+    if (value &gt;= 100) return &quot;$&quot; + d3.format(&quot;,.0f&quot;)(value) + &quot;/month&quot;;
+    return &quot;$&quot; + d3.format(&quot;,.2f&quot;)(value) + &quot;/month&quot;;
+  }
+
+  function formatTokenTick(value) {
+    if (Math.abs(value) &lt; 1e-9) return &quot;0&quot;;
+    if (value &gt;= 1000) {
+      const billions = value / 1000;
+      return d3.format(billions &gt;= 10 ? &quot;.0f&quot; : &quot;.2~f&quot;)(billions) + &quot;B&quot;;
+    }
+    return d3.format(&quot;.3~g&quot;)(value) + &quot;M&quot;;
+  }
+
+  function formatTokensLong(value) {
+    if (value &gt;= 1000) {
+      const billions = value / 1000;
+      return d3.format(billions &gt;= 100 ? &quot;,.0f&quot; : billions &gt;= 10 ? &quot;,.1f&quot; : &quot;,.2f&quot;)(billions) + &quot; billion tokens/month&quot;;
+    }
+    return d3.format(value &gt;= 100 ? &quot;,.0f&quot; : value &gt;= 10 ? &quot;,.1f&quot; : &quot;,.2f&quot;)(value) + &quot; million tokens/month&quot;;
+  }
+
+  function formatRequests(value) {
+    const requests = value * 1000000 / 35000;
+    if (requests &gt;= 1000000) return d3.format(&quot;.3~s&quot;)(requests).replace(&quot;G&quot;, &quot;B&quot;);
+    return d3.format(&quot;,.0f&quot;)(requests);
+  }
+
+  function sliderToTokens(value) {
+    const maxForView = viewMode === &quot;focus&quot; ? focusMaxTokensM : maxTokensM;
+    const localMin = Math.log10(minTokensM);
+    const localMax = Math.log10(maxForView);
+    return Math.pow(10, localMin + (Number(value) / 1000) * (localMax - localMin));
+  }
+
+  function tokensToSlider(value) {
+    const maxForView = viewMode === &quot;focus&quot; ? focusMaxTokensM : maxTokensM;
+    const clamped = Math.max(minTokensM, Math.min(maxForView, value));
+    const localMin = Math.log10(minTokensM);
+    const localMax = Math.log10(maxForView);
+    return Math.round(1000 * (Math.log10(clamped) - localMin) / (localMax - localMin));
+  }
+
+  function lineStyleName(dash) {
+    if (!dash) return &quot;solid&quot;;
+    if (dash === &quot;2 4&quot;) return &quot;dotted&quot;;
+    return &quot;dashed&quot;;
+  }
+
+  function buildLegend() {
+    legend.innerHTML = &quot;&quot;;
+    series.forEach(function (item) {
+      const row = document.createElement(&quot;div&quot;);
+      row.className = &quot;legend-row&quot;;
+      row.dataset.seriesId = item.id;
+
+      const swatch = document.createElement(&quot;span&quot;);
+      swatch.className = &quot;legend-line&quot;;
+      swatch.style.setProperty(&quot;--line-color&quot;, cssVar(item.colorVar));
+      swatch.style.setProperty(&quot;--line-width&quot;, item.width + &quot;px&quot;);
+      swatch.style.setProperty(&quot;--line-style&quot;, lineStyleName(item.dash));
+      swatch.setAttribute(&quot;aria-hidden&quot;, &quot;true&quot;);
+
+      const copy = document.createElement(&quot;span&quot;);
+      copy.className = &quot;legend-copy&quot;;
+      const name = document.createElement(&quot;span&quot;);
+      name.className = &quot;legend-name&quot;;
+      name.textContent = item.name;
+      const detail = document.createElement(&quot;span&quot;);
+      detail.className = &quot;legend-detail text-small&quot;;
+      detail.textContent = item.detail;
+      copy.appendChild(name);
+      copy.appendChild(detail);
+
+      const value = document.createElement(&quot;span&quot;);
+      value.className = &quot;legend-value&quot;;
+      value.dataset.valueFor = item.id;
+
+      row.appendChild(swatch);
+      row.appendChild(copy);
+      row.appendChild(value);
+      legend.appendChild(row);
+    });
+  }
+
+  function sampleApi(item, domain) {
+    return [[domain[0], item.cost(domain[0])], [domain[1], item.cost(domain[1])]];
+  }
+
+  function sampleInfrastructure(item, domain) {
+    const points = [[domain[0], item.cost(domain[0])]];
+    const firstBoundary = Math.max(1, Math.ceil(domain[0] / item.capacity));
+    const lastBoundary = Math.floor(domain[1] / item.capacity);
+    for (let n = firstBoundary; n &lt;= lastBoundary; n += 1) {
+      const boundary = n * item.capacity;
+      if (boundary &gt; domain[0] &amp;&amp; boundary &lt; domain[1]) {
+        points.push([boundary, n * item.nodeCost]);
+        points.push([boundary * (1 + 1e-9), (n + 1) * item.nodeCost]);
+      }
+    }
+    points.push([domain[1], item.cost(domain[1])]);
+    return points;
+  }
+
+  function tickValuesFor(domain) {
+    if (viewMode === &quot;focus&quot;) return d3.ticks(Math.max(0, domain[0]), Math.min(focusMaxTokensM, domain[1]), 5);
+    const candidates = [1, 3, 10, 30, 100, 300, 1000, 3000, 10000, 30000, 100000, 300000];
+    const values = candidates.filter(function (v) { return v &gt;= domain[0] &amp;&amp; v &lt;= domain[1]; });
+    if (values.length &gt;= 2 &amp;&amp; values.length &lt;= 7) return values;
+    const filtered = values.filter(function (v) {
+      const mantissa = v / Math.pow(10, Math.floor(Math.log10(v)));
+      return Math.abs(mantissa - 1) &lt; 1e-9 || v === 300000;
+    });
+    if (filtered.length &gt;= 2) return filtered;
+    return [domain[0], Math.sqrt(domain[0] * domain[1]), domain[1]];
+  }
+
+  function updateLegendValues() {
+    const active = visibleGroups();
+    series.forEach(function (item) {
+      const row = legend.querySelector(&#x27;[data-series-id=&quot;&#x27; + item.id + &#x27;&quot;]&#x27;);
+      const value = legend.querySelector(&#x27;[data-value-for=&quot;&#x27; + item.id + &#x27;&quot;]&#x27;);
+      const isVisible = active.has(item.group);
+      row.classList.toggle(&quot;is-hidden&quot;, !isVisible);
+      if (item.nodeCost) {
+        const nodes = nodeCount(selectedTokensM);
+        value.textContent = formatExactCurrency(item.cost(selectedTokensM)) + &quot; · &quot; +
+          formatCompactCurrency(item.cost(selectedTokensM) / selectedTokensM) + &quot;/M · &quot; +
+          nodes + (nodes === 1 ? &quot; node&quot; : &quot; nodes&quot;);
+      } else {
+        value.textContent = formatExactCurrency(item.cost(selectedTokensM)) + &quot; · &quot; +
+          formatCompactCurrency(item.cost(1)) + &quot;/M&quot;;
+      }
+    });
+  }
+
+  function comparisonToGpt(label, cost, gptCost) {
+    const difference = (cost / gptCost) - 1;
+    if (Math.abs(difference) &lt; 0.0005) return label + &quot; matches GPT&quot;;
+    const percentage = Math.abs(difference) * 100;
+    const formatted = d3.format(percentage &gt;= 10 ? &quot;.0f&quot; : &quot;.1f&quot;)(percentage);
+    return label + &quot; is &quot; + formatted + &quot;% &quot; + (difference &lt; 0 ? &quot;below&quot; : &quot;above&quot;) + &quot; GPT&quot;;
+  }
+
+  function updateTakeaway() {
+    const activeSeries = visibleSeries();
+    const cheapest = activeSeries.reduce(function (best, item) {
+      return item.cost(selectedTokensM) &lt; best.cost(selectedTokensM) ? item : best;
+    }, activeSeries[0]);
+    const gptCost = series.find(function (item) { return item.id === &quot;gpt&quot;; }).cost(selectedTokensM);
+    const ownedCost = series.find(function (item) { return item.id === &quot;owned&quot;; }).cost(selectedTokensM);
+    const akashCost = series.find(function (item) { return item.id === &quot;akash&quot;; }).cost(selectedTokensM);
+    const shortNames = {
+      gpt: &quot;GPT-5.6&quot;,
+      claude: &quot;Claude Sonnet 5&quot;,
+      gemini: &quot;Gemini 3.1 Pro&quot;,
+      grok: &quot;Grok 4.5&quot;,
+      deepseek: &quot;DeepSeek direct&quot;,
+      akash: &quot;Akash Llama&quot;,
+      owned: &quot;Owned Llama&quot;
+    };
+    takeaway.textContent = &quot;At &quot; + formatTokensLong(selectedTokensM) + &quot;: &quot; +
+      shortNames[cheapest.id] + &quot; is cheapest at &quot; + formatExactCurrency(cheapest.cost(selectedTokensM)) + &quot;. &quot; +
+      comparisonToGpt(&quot;Owned Llama&quot;, ownedCost, gptCost) + &quot;; &quot; +
+      comparisonToGpt(&quot;Akash Llama&quot;, akashCost, gptCost) + &quot;.&quot;;
+  }
+
+  function updateSelection() {
+    const maxForView = viewMode === &quot;focus&quot; ? focusMaxTokensM : maxTokensM;
+    selectedTokensM = Math.max(minTokensM, Math.min(maxForView, selectedTokensM));
+    readout.textContent = formatTokensLong(selectedTokensM) + &quot; · &quot; +
+      formatRequests(selectedTokensM) + &quot; standardized 35K-token requests&quot;;
+    slider.value = String(tokensToSlider(selectedTokensM));
+    updateLegendValues();
+    updateTakeaway();
+
+    if (!plot || !xView || !yScale) return;
+    const x = xView(selectedTokensM);
+    const inside = x &gt;= 0 &amp;&amp; x &lt;= innerWidth;
+    plot.select(&quot;.crosshair&quot;)
+      .attr(&quot;display&quot;, inside ? null : &quot;none&quot;)
+      .attr(&quot;x1&quot;, x)
+      .attr(&quot;x2&quot;, x)
+      .attr(&quot;y1&quot;, 0)
+      .attr(&quot;y2&quot;, innerHeight);
+
+    const marks = plot.select(&quot;.selection-layer&quot;)
+      .selectAll(&quot;path&quot;)
+      .data(visibleSeries(), function (d) { return d.id; });
+
+    marks.exit().remove();
+    marks.enter()
+      .append(&quot;path&quot;)
+      .attr(&quot;class&quot;, &quot;selection-mark&quot;)
+      .merge(marks)
+      .attr(&quot;display&quot;, inside ? null : &quot;none&quot;)
+      .attr(&quot;d&quot;, function (d) { return d3.symbol().type(d.marker).size(d.group === &quot;frontier&quot; ? 42 : 64)(); })
+      .attr(&quot;transform&quot;, function (d) { return &quot;translate(&quot; + x + &quot;,&quot; + yScale(d.cost(selectedTokensM)) + &quot;)&quot;; })
+      .attr(&quot;fill&quot;, function (d) { return cssVar(d.colorVar); });
+  }
+
+  function renderCrossovers(domain) {
+    const gptRate = series.find(function (item) { return item.id === &quot;gpt&quot;; }).cost(1);
+    const crossoverData = viewMode === &quot;focus&quot; ? [
+      {
+        id: &quot;owned-gpt&quot;,
+        x: ownedNodeMonthly / gptRate,
+        y: ownedNodeMonthly,
+        label: &quot;Owned beats GPT after 1.07B&quot;,
+        colorVar: &quot;--foreground&quot;
+      },
+      {
+        id: &quot;akash-gpt&quot;,
+        x: akashNodeMonthly / gptRate,
+        y: akashNodeMonthly,
+        label: &quot;Akash beats GPT after 3.06B&quot;,
+        colorVar: &quot;--viz-series-4&quot;
+      }
+    ].filter(function (item) { return item.x &gt;= domain[0] &amp;&amp; item.x &lt;= domain[1]; }) : [];
+
+    const annotations = plot.select(&quot;.annotation-layer&quot;)
+      .selectAll(&quot;g.crossover&quot;)
+      .data(crossoverData, function (d) { return d.id; });
+
+    annotations.exit().remove();
+    const entered = annotations.enter().append(&quot;g&quot;).attr(&quot;class&quot;, &quot;crossover&quot;);
+    entered.append(&quot;circle&quot;).attr(&quot;class&quot;, &quot;crossover-dot&quot;).attr(&quot;r&quot;, 4);
+    entered.append(&quot;text&quot;).attr(&quot;class&quot;, &quot;crossover-label text-small&quot;).attr(&quot;dy&quot;, -10);
+
+    const merged = entered.merge(annotations)
+      .attr(&quot;transform&quot;, function (d) { return &quot;translate(&quot; + xView(d.x) + &quot;,&quot; + yScale(d.y) + &quot;)&quot;; });
+
+    merged.select(&quot;circle&quot;).attr(&quot;fill&quot;, function (d) { return cssVar(d.colorVar); });
+    merged.select(&quot;text&quot;)
+      .attr(&quot;text-anchor&quot;, function (d) { return xView(d.x) &gt; innerWidth * 0.72 ? &quot;end&quot; : &quot;start&quot;; })
+      .attr(&quot;dx&quot;, function (d) { return xView(d.x) &gt; innerWidth * 0.72 ? -8 : 8; })
+      .text(function (d) { return d.label; });
+  }
+
+  function renderEndpointLabels(domain) {
+    const primaryIds = new Set([&quot;gpt&quot;, &quot;deepseek&quot;, &quot;akash&quot;, &quot;owned&quot;]);
+    const showLabels = viewMode === &quot;focus&quot; &amp;&amp; innerWidth &gt;= 430 &amp;&amp;
+      domain[0] &lt;= focusMaxTokensM &amp;&amp; domain[1] &gt;= focusMaxTokensM * 0.98;
+    const shortNames = {
+      gpt: &quot;GPT-5.6 frontier&quot;,
+      deepseek: &quot;DeepSeek API&quot;,
+      akash: &quot;Akash Llama&quot;,
+      owned: &quot;Owned Llama&quot;
+    };
+    const labelData = showLabels ? visibleSeries().filter(function (item) {
+      return primaryIds.has(item.id);
+    }) : [];
+
+    const labels = plot.select(&quot;.endpoint-layer&quot;)
+      .selectAll(&quot;text&quot;)
+      .data(labelData, function (d) { return d.id; });
+    labels.exit().remove();
+    labels.enter().append(&quot;text&quot;)
+      .attr(&quot;class&quot;, &quot;endpoint-label text-small&quot;)
+      .attr(&quot;text-anchor&quot;, &quot;end&quot;)
+      .merge(labels)
+      .attr(&quot;x&quot;, innerWidth - 6)
+      .attr(&quot;y&quot;, function (d) { return yScale(d.cost(focusMaxTokensM)) - 7; })
+      .text(function (d) {
+        return shortNames[d.id] + &quot; · &quot; + formatCompactCurrency(d.cost(focusMaxTokensM)) + &quot;/mo&quot;;
+      });
+  }
+
+  function renderPlot() {
+    if (!plot) return;
+    const activeSeries = visibleSeries();
+    const lowerBound = viewMode === &quot;focus&quot; ? 0 : minTokensM;
+    const domain = xView.domain().map(function (v) {
+      return Math.max(lowerBound, Math.min(viewMode === &quot;focus&quot; ? focusMaxTokensM : maxTokensM, v));
+    });
+    const upper = d3.max(activeSeries, function (item) { return item.cost(domain[1]); }) || 1;
+    if (viewMode === &quot;focus&quot;) yScale.domain([0, focusMaxCost]);
+    else yScale.domain([0, upper * 1.08]).nice();
+
+    const yTicks = yScale.ticks(6);
+    plot.select(&quot;.y-grid&quot;)
+      .call(d3.axisLeft(yScale).tickValues(yTicks).tickSize(-innerWidth).tickFormat(&quot;&quot;));
+    plot.select(&quot;.y-axis&quot;)
+      .call(d3.axisLeft(yScale).tickValues(yTicks).tickFormat(formatCompactCurrency));
+
+    const xTicks = tickValuesFor(domain);
+    plot.select(&quot;.x-axis&quot;)
+      .attr(&quot;transform&quot;, &quot;translate(0,&quot; + innerHeight + &quot;)&quot;)
+      .call(d3.axisBottom(xView).tickValues(xTicks).tickFormat(formatTokenTick));
+
+    const paths = plot.select(&quot;.series-layer&quot;)
+      .selectAll(&quot;path&quot;)
+      .data(activeSeries, function (d) { return d.id; });
+
+    paths.exit().remove();
+    paths.enter()
+      .append(&quot;path&quot;)
+      .attr(&quot;class&quot;, &quot;series-path&quot;)
+      .merge(paths)
+      .attr(&quot;stroke&quot;, function (d) { return cssVar(d.colorVar); })
+      .attr(&quot;stroke-width&quot;, function (d) { return d.width; })
+      .attr(&quot;stroke-dasharray&quot;, function (d) { return d.dash || null; })
+      .attr(&quot;d&quot;, function (d) {
+        const points = d.nodeCost ? sampleInfrastructure(d, domain) : sampleApi(d, domain);
+        return d3.line()
+          .x(function (p) { return xView(p[0]); })
+          .y(function (p) { return yScale(p[1]); })
+          .curve(d.nodeCost ? d3.curveStepAfter : d3.curveLinear)(points);
+      });
+
+    renderCrossovers(domain);
+    renderEndpointLabels(domain);
+    updateSelection();
+  }
+
+  function applyViewMode(nextMode) {
+    viewMode = nextMode === &quot;full&quot; ? &quot;full&quot; : &quot;focus&quot;;
+    rangeSelect.value = viewMode;
+    if (viewMode === &quot;focus&quot; &amp;&amp; selectedTokensM &gt; focusMaxTokensM) selectedTokensM = 5000;
+    xBase = viewMode === &quot;focus&quot;
+      ? d3.scaleLinear().domain([0, focusMaxTokensM]).range([0, innerWidth]).clamp(true)
+      : d3.scaleLog().domain([minTokensM, maxTokensM]).range([0, innerWidth]).clamp(true);
+    xView = xBase.copy();
+    suppressZoom = true;
+    svg.call(zoom.transform, d3.zoomIdentity);
+    suppressZoom = false;
+    currentTransform = d3.zoomIdentity;
+    tooltip.style.opacity = &quot;0&quot;;
+    if (plot) {
+      plot.select(&quot;.x-axis-label&quot;).text(viewMode === &quot;focus&quot;
+        ? &quot;Monthly total tokens · linear 0–8B&quot;
+        : &quot;Monthly total tokens · logarithmic 1M–300B&quot;);
+    }
+    renderPlot();
+  }
+
+  const zoom = d3.zoom()
+    .scaleExtent([1, 40])
+    .on(&quot;zoom&quot;, function (event) {
+      if (suppressZoom || !xBase) return;
+      currentTransform = event.transform;
+      xView = currentTransform.rescaleX(xBase);
+      renderPlot();
+    });
+
+  function layout() {
+    const nextWidth = Math.max(300, Math.round(wrap.getBoundingClientRect().width));
+    if (nextWidth === width &amp;&amp; plot) return;
+    width = nextWidth;
+    height = width &gt;= 760 ? 500 : width &gt;= 500 ? 430 : 360;
+    margins = width &gt;= 500
+      ? {top: 18, right: 20, bottom: 64, left: 76}
+      : {top: 14, right: 10, bottom: 62, left: 58};
+    innerWidth = Math.max(1, width - margins.left - margins.right);
+    innerHeight = Math.max(1, height - margins.top - margins.bottom);
+
+    svg.attr(&quot;viewBox&quot;, &quot;0 0 &quot; + width + &quot; &quot; + height).attr(&quot;height&quot;, height);
+    svg.selectAll(&quot;g.chart-root&quot;).remove();
+
+    plot = svg.append(&quot;g&quot;)
+      .attr(&quot;class&quot;, &quot;chart-root&quot;)
+      .attr(&quot;transform&quot;, &quot;translate(&quot; + margins.left + &quot;,&quot; + margins.top + &quot;)&quot;);
+
+    plot.append(&quot;g&quot;).attr(&quot;class&quot;, &quot;grid y-grid&quot;);
+    plot.append(&quot;g&quot;).attr(&quot;class&quot;, &quot;axis y-axis&quot;);
+    plot.append(&quot;g&quot;).attr(&quot;class&quot;, &quot;axis x-axis&quot;);
+    plot.append(&quot;g&quot;).attr(&quot;class&quot;, &quot;series-layer&quot;);
+    plot.append(&quot;g&quot;).attr(&quot;class&quot;, &quot;annotation-layer&quot;);
+    plot.append(&quot;g&quot;).attr(&quot;class&quot;, &quot;endpoint-layer&quot;);
+    plot.append(&quot;line&quot;).attr(&quot;class&quot;, &quot;crosshair&quot;);
+    plot.append(&quot;g&quot;).attr(&quot;class&quot;, &quot;selection-layer&quot;);
+
+    plot.append(&quot;text&quot;)
+      .attr(&quot;class&quot;, &quot;axis-title x-axis-label&quot;)
+      .attr(&quot;text-anchor&quot;, &quot;middle&quot;)
+      .attr(&quot;x&quot;, innerWidth / 2)
+      .attr(&quot;y&quot;, innerHeight + 50)
+      .text(&quot;Monthly total tokens · linear 0–8B&quot;);
+
+    plot.append(&quot;text&quot;)
+      .attr(&quot;class&quot;, &quot;axis-title&quot;)
+      .attr(&quot;text-anchor&quot;, &quot;middle&quot;)
+      .attr(&quot;transform&quot;, &quot;rotate(-90)&quot;)
+      .attr(&quot;x&quot;, -innerHeight / 2)
+      .attr(&quot;y&quot;, -56)
+      .text(&quot;Monthly cost (USD)&quot;);
+
+    overlay = plot.append(&quot;rect&quot;)
+      .attr(&quot;class&quot;, &quot;hover-target&quot;)
+      .attr(&quot;width&quot;, innerWidth)
+      .attr(&quot;height&quot;, innerHeight)
+      .on(&quot;mousemove&quot;, function (event) {
+        const pointer = d3.pointer(event, this);
+        const maxForView = viewMode === &quot;focus&quot; ? focusMaxTokensM : maxTokensM;
+        selectedTokensM = Math.max(minTokensM, Math.min(maxForView, xView.invert(pointer[0])));
+        updateSelection();
+        tooltip.textContent = formatTokensLong(selectedTokensM);
+        tooltip.style.opacity = &quot;1&quot;;
+        const tooltipWidth = tooltip.getBoundingClientRect().width;
+        const left = Math.max(tooltipWidth / 2 + 4, Math.min(width - tooltipWidth / 2 - 4, margins.left + pointer[0]));
+        tooltip.style.left = left + &quot;px&quot;;
+        tooltip.style.top = (margins.top + 4) + &quot;px&quot;;
+      })
+      .on(&quot;mouseleave&quot;, function () {
+        tooltip.style.opacity = &quot;0&quot;;
+      });
+
+    yScale = d3.scaleLinear().range([innerHeight, 0]);
+
+    zoom.extent([[0, 0], [innerWidth, innerHeight]])
+      .translateExtent([[0, 0], [innerWidth, innerHeight]]);
+    svg.call(zoom);
+    currentTransform = d3.zoomIdentity;
+    applyViewMode(viewMode);
+  }
+
+  slider.addEventListener(&quot;input&quot;, function () {
+    selectedTokensM = sliderToTokens(slider.value);
+    updateSelection();
+  });
+
+  groupToggles.forEach(function (control) {
+    control.addEventListener(&quot;change&quot;, function () {
+      renderPlot();
+    });
+  });
+
+  rangeSelect.addEventListener(&quot;change&quot;, function () {
+    applyViewMode(rangeSelect.value);
+  });
+
+  buildLegend();
+  const resizeObserver = new ResizeObserver(function () { layout(); });
+  resizeObserver.observe(wrap);
+  requestAnimationFrame(layout);
+})();
+&lt;/script&gt;
+
+&lt;script src=&quot;https://unpkg.com/@floating-ui/core@1.7.3/dist/floating-ui.core.umd.min.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;https://unpkg.com/@floating-ui/dom@1.7.4/dist/floating-ui.dom.umd.min.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+(() =&gt; {
+  if (window.FloatingUIDOM == null) {
+    return;
+  }
+  const { autoUpdate, computePosition, flip, offset, shift, size } =
+    window.FloatingUIDOM;
+  const tooltipPlacements = new Set([&quot;top&quot;, &quot;right&quot;, &quot;bottom&quot;, &quot;left&quot;]);
+  const tooltipId = `codex-visualization-tooltip-${
+    window.crypto?.randomUUID?.() ?? Date.now().toString(36)
+  }`;
+  const tooltipGap = 5;
+  const hoverDelay = 700;
+  const skipDelay = 300;
+  let activeTrigger = null;
+  let pendingTrigger = null;
+  let tooltip = null;
+  let openTimeout = null;
+  let autoUpdateCleanup = null;
+  let positionRequest = 0;
+  let skipDelayUntil = 0;
+
+  const getTrigger = (target) =&gt;
+    target?.nodeType === Node.ELEMENT_NODE
+      ? target.closest(&quot;[data-tooltip]&quot;)
+      : null;
+  const containsTarget = (trigger, target) =&gt;
+    target?.nodeType != null &amp;&amp; trigger.contains(target);
+  const getContent = (trigger) =&gt;
+    trigger.getAttribute(&quot;data-tooltip&quot;)?.trim() ?? &quot;&quot;;
+  const getPlacement = (trigger) =&gt; {
+    const placement = trigger.getAttribute(&quot;data-tooltip-placement&quot;);
+    return tooltipPlacements.has(placement) ? placement : &quot;top&quot;;
+  };
+  const getTooltip = () =&gt; {
+    if (tooltip == null) {
+      tooltip = document.createElement(&quot;div&quot;);
+      tooltip.id = tooltipId;
+      tooltip.className = &quot;tooltip&quot;;
+      tooltip.setAttribute(&quot;role&quot;, &quot;tooltip&quot;);
+    }
+    return tooltip;
+  };
+  const setDescribedBy = (trigger, described) =&gt; {
+    const ids = new Set(
+      (trigger.getAttribute(&quot;aria-describedby&quot;) ?? &quot;&quot;)
+        .split(/\s+/)
+        .filter(Boolean),
+    );
+    if (described) {
+      ids.add(tooltipId);
+    } else {
+      ids.delete(tooltipId);
+    }
+    if (ids.size === 0) {
+      trigger.removeAttribute(&quot;aria-describedby&quot;);
+    } else {
+      trigger.setAttribute(&quot;aria-describedby&quot;, [...ids].join(&quot; &quot;));
+    }
+  };
+  const clearOpenTimeout = () =&gt; {
+    if (openTimeout != null) {
+      window.clearTimeout(openTimeout);
+      openTimeout = null;
+    }
+    pendingTrigger = null;
+  };
+  const closeTooltip = (activateSkipDelay = true) =&gt; {
+    clearOpenTimeout();
+    positionRequest += 1;
+    autoUpdateCleanup?.();
+    autoUpdateCleanup = null;
+    if (activeTrigger == null) {
+      return;
+    }
+    setDescribedBy(activeTrigger, false);
+    activeTrigger = null;
+    tooltip?.remove();
+    if (activateSkipDelay) {
+      skipDelayUntil = Date.now() + skipDelay;
+    }
+  };
+  const updatePosition = (trigger, floating) =&gt; {
+    const request = ++positionRequest;
+    void computePosition(trigger, floating, {
+      middleware: [
+        offset(tooltipGap),
+        flip({ padding: tooltipGap }),
+        shift({ padding: tooltipGap }),
+        size({
+          padding: tooltipGap,
+          apply({ availableHeight, availableWidth, elements }) {
+            elements.floating.style.setProperty(
+              &quot;--tooltip-available-width&quot;,
+              `${Math.max(0, availableWidth)}px`,
+            );
+            elements.floating.style.setProperty(
+              &quot;--tooltip-available-height&quot;,
+              `${Math.max(0, availableHeight)}px`,
+            );
+          },
+        }),
+      ],
+      placement: getPlacement(trigger),
+      strategy: &quot;fixed&quot;,
+    })
+      .then(({ x, y }) =&gt; {
+        if (activeTrigger !== trigger || request !== positionRequest) {
+          return;
+        }
+        const scale = window.devicePixelRatio || 1;
+        floating.style.transform = `translate(${Math.round(x * scale) / scale}px, ${Math.round(y * scale) / scale}px)`;
+        floating.style.visibility = &quot;visible&quot;;
+      })
+      .catch(() =&gt; {
+        if (activeTrigger === trigger &amp;&amp; request === positionRequest) {
+          closeTooltip(false);
+        }
+      });
+  };
+  const openTooltip = (trigger) =&gt; {
+    const content = getContent(trigger);
+    if (!trigger.isConnected || content.length === 0) {
+      return;
+    }
+    clearOpenTimeout();
+    if (activeTrigger === trigger) {
+      return;
+    }
+    closeTooltip();
+    const floating = getTooltip();
+    floating.textContent = content;
+    floating.style.visibility = &quot;hidden&quot;;
+    floating.style.transform = &quot;translate(0, 0)&quot;;
+    document.body.appendChild(floating);
+    activeTrigger = trigger;
+    setDescribedBy(trigger, true);
+    autoUpdateCleanup = autoUpdate(trigger, floating, () =&gt; {
+      updatePosition(trigger, floating);
+    });
+  };
+  const requestOpen = (trigger, immediate = false) =&gt; {
+    if (
+      getContent(trigger).length === 0 ||
+      activeTrigger === trigger ||
+      pendingTrigger === trigger
+    ) {
+      return;
+    }
+    clearOpenTimeout();
+    pendingTrigger = trigger;
+    const delay =
+      immediate || activeTrigger != null || Date.now() &lt; skipDelayUntil
+        ? 0
+        : hoverDelay;
+    if (delay === 0) {
+      openTooltip(trigger);
+      return;
+    }
+    openTimeout = window.setTimeout(() =&gt; {
+      openTimeout = null;
+      pendingTrigger = null;
+      openTooltip(trigger);
+    }, delay);
+  };
+  const handlePointerOpen = (event) =&gt; {
+    if (event.pointerType === &quot;touch&quot;) {
+      return;
+    }
+    const trigger = getTrigger(event.target);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    requestOpen(trigger);
+  };
+  const handleLeave = (event) =&gt; {
+    const trigger = getTrigger(event.target);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const handleFocusIn = (event) =&gt; {
+    const trigger = getTrigger(event.target);
+    if (trigger?.matches(&quot;:focus-visible&quot;)) {
+      requestOpen(trigger, true);
+    }
+  };
+  const handleKeyDown = (event) =&gt; {
+    if (event.key === &quot;Escape&quot;) {
+      closeTooltip();
+    }
+  };
+  const handleContextMenu = (event) =&gt; {
+    const trigger = getTrigger(event.target);
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const destroy = () =&gt; {
+    closeTooltip(false);
+    document.removeEventListener(&quot;pointerover&quot;, handlePointerOpen);
+    document.removeEventListener(&quot;pointerout&quot;, handleLeave);
+    document.removeEventListener(&quot;focusin&quot;, handleFocusIn);
+    document.removeEventListener(&quot;focusout&quot;, handleLeave);
+    document.removeEventListener(&quot;keydown&quot;, handleKeyDown);
+    document.removeEventListener(&quot;contextmenu&quot;, handleContextMenu);
+    tooltip = null;
+  };
+
+  document.addEventListener(&quot;pointerover&quot;, handlePointerOpen);
+  document.addEventListener(&quot;pointerout&quot;, handleLeave);
+  document.addEventListener(&quot;focusin&quot;, handleFocusIn);
+  document.addEventListener(&quot;focusout&quot;, handleLeave);
+  document.addEventListener(&quot;keydown&quot;, handleKeyDown);
+  document.addEventListener(&quot;contextmenu&quot;, handleContextMenu);
+  window.addEventListener(&quot;pagehide&quot;, destroy, { once: true });
+})();
+&lt;/script&gt;
+&lt;script id=&quot;codex-visualization-lucide&quot; async src=&quot;https://unpkg.com/lucide@1.17.0/dist/umd/lucide.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+(() =&gt; {
+  const initialize = () =&gt; {
+    globalThis.lucide?.createIcons({ attrs: { width: 16, height: 16 } });
+  };
+  if (globalThis.lucide != null) {
+    initialize();
+    return;
+  }
+  document
+    .getElementById(&quot;codex-visualization-lucide&quot;)
+    ?.addEventListener(&quot;load&quot;, initialize, { once: true });
+})();
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+"></iframe>
+</body>
+</html>
